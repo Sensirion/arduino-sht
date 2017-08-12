@@ -226,7 +226,6 @@ public:
   float mY;
 
 private:
-  static const uint8_t MAX_I2C_READ_TRIES;
   static uint8_t crc8(const uint8_t *data, uint8_t len);
   static bool readFromI2c(uint8_t i2cAddress,
                           const uint8_t *i2cCommand,

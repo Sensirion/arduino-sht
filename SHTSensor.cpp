@@ -53,7 +53,6 @@ bool SHTSensorDriver::readSample()
 
 const uint8_t SHTI2cSensor::CMD_SIZE            = 2;
 const uint8_t SHTI2cSensor::EXPECTED_DATA_SIZE  = 6;
-const uint8_t SHTI2cSensor::MAX_I2C_READ_TRIES  = 5;
 
 bool SHTI2cSensor::readFromI2c(uint8_t i2cAddress,
                                const uint8_t *i2cCommand,

@@ -51,7 +51,6 @@ bool SHTSensorDriver::readSample()
 // class SHTI2cSensor
 //
 
-const uint8_t SHTI2cSensor::CMD_SIZE             = 2;
 const uint8_t SHTI2cSensor::EXPECTED_DATA_SIZE   = 6;
 
 bool SHTI2cSensor::readFromI2c(uint8_t i2cAddress,
@@ -110,12 +109,13 @@ uint8_t SHTI2cSensor::crc8(const uint8_t *data, uint8_t len)
 bool SHTI2cSensor::readSample()
 {
   uint8_t data[EXPECTED_DATA_SIZE];
-  uint8_t cmd[CMD_SIZE];
+  uint8_t cmd[mCMD_Size];
 
   cmd[0] = mI2cCommand >> 8;
+  //is omitted for SHT4x Sensors
   cmd[1] = mI2cCommand & 0xff;
 
-  if (!readFromI2c(mI2cAddress, cmd, CMD_SIZE, data,
+  if (!readFromI2c(mI2cAddress, cmd, mCMD_Size, data,
                    EXPECTED_DATA_SIZE, mDuration)) {
     return false;
   }
@@ -133,11 +133,11 @@ bool SHTI2cSensor::readSample()
   mTemperature = mA + mB * (val / mC);
 
   val = (data[3] << 8) + data[4];
-  mHumidity = mX * (val / mY);
+  mHumidity = mZ + mX * (val / mY);
 
-  return true;
+  return true; 
+  
 }
-
 
 //
 // class SHTC1Sensor
@@ -148,7 +148,7 @@ class SHTC1Sensor : public SHTI2cSensor
 public:
     SHTC1Sensor()
         // clock stretching disabled, high precision, T first
-        : SHTI2cSensor(0x70, 0x7866, 15, -45, 175, 65535, 100, 65535)
+        : SHTI2cSensor(0x70, 0x7866, 15, -45, 175, 65535, 100, 65535,0,2)
     {
     }
 };
@@ -176,7 +176,7 @@ public:
   SHT3xSensor(uint8_t i2cAddress = SHT3X_I2C_ADDRESS_44)
       : SHTI2cSensor(i2cAddress, SHT3X_ACCURACY_HIGH,
                      SHT3X_ACCURACY_HIGH_DURATION,
-                     -45, 175, 65535, 100, 65535)
+                     -45, 175, 65535, 100, 65535,0,2)
   {
   }
 
@@ -194,6 +194,55 @@ public:
       case SHTSensor::SHT_ACCURACY_LOW:
         mI2cCommand = SHT3X_ACCURACY_LOW;
         mDuration = SHT3X_ACCURACY_LOW_DURATION;
+        break;
+      default:
+        return false;
+    }
+    return true;
+  }
+};
+
+
+//
+// class SHT4xSensor
+//
+
+class SHT4xSensor : public SHTI2cSensor
+{
+private:
+  static const uint16_t SHT4X_ACCURACY_HIGH    = 0xFD00;
+  static const uint16_t SHT4X_ACCURACY_MEDIUM  = 0xF600;
+  static const uint16_t SHT4X_ACCURACY_LOW     = 0xE000;
+
+  static const uint8_t SHT4X_ACCURACY_HIGH_DURATION   = 10;
+  static const uint8_t SHT4X_ACCURACY_MEDIUM_DURATION = 4;
+  static const uint8_t SHT4X_ACCURACY_LOW_DURATION    = 2;
+
+public:
+  static const uint8_t SHT4X_I2C_ADDRESS_44 = 0x44;
+  static const uint8_t SHT4X_I2C_ADDRESS_45 = 0x45;
+
+  SHT4xSensor(uint8_t i2cAddress = SHT4X_I2C_ADDRESS_44)
+      : SHTI2cSensor(i2cAddress, SHT4X_ACCURACY_HIGH,
+                     SHT4X_ACCURACY_HIGH_DURATION,
+                     -45, 175, 65535, 125, 65535,-6,1)
+  {
+  }
+
+  virtual bool setAccuracy(SHTSensor::SHTAccuracy newAccuracy)
+  {
+    switch (newAccuracy) {
+      case SHTSensor::SHT_ACCURACY_HIGH:
+        mI2cCommand = SHT4X_ACCURACY_HIGH;
+        mDuration = SHT4X_ACCURACY_HIGH_DURATION;
+        break;
+      case SHTSensor::SHT_ACCURACY_MEDIUM:
+        mI2cCommand = SHT4X_ACCURACY_MEDIUM;
+        mDuration = SHT4X_ACCURACY_MEDIUM_DURATION;
+        break;
+      case SHTSensor::SHT_ACCURACY_LOW:
+        mI2cCommand = SHT4X_ACCURACY_LOW;
+        mDuration = SHT4X_ACCURACY_LOW_DURATION;
         break;
       default:
         return false;
@@ -227,7 +276,8 @@ float SHT3xAnalogSensor::readTemperature()
 const SHTSensor::SHTSensorType SHTSensor::AUTO_DETECT_SENSORS[] = {
   SHT3X,
   SHT3X_ALT,
-  SHTC1
+  SHTC1,
+  SHT4X
 };
 const float SHTSensor::TEMPERATURE_INVALID = NAN;
 const float SHTSensor::HUMIDITY_INVALID = NAN;
@@ -252,7 +302,9 @@ bool SHTSensor::init()
     case SHTC1:
       mSensor = new SHTC1Sensor();
       break;
-
+    case SHT4X:
+      mSensor = new SHT4xSensor();
+      break;
     case AUTO_DETECT:
     {
       bool detected = false;

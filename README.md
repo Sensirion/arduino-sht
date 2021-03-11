@@ -8,6 +8,7 @@ Repository for Sensirion humidity and temperature sensor support on Arduino
 - SHT3x-DIS (I2C)
 - SHT3x-ARP (ratiometric analog voltage output)
 - SHT85
+- SHT4x
 
 ## Installation
 

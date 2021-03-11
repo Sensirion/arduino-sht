@@ -213,14 +213,14 @@ public:
    * the formula: temperature = a + b * (rawTemperature / c)
    * and the values `x' and `y' to convert the fixed-point humidity value
    * received by the sensor to a floating point value using the formula:
-   * humidity = z + x * (rawHumidity / y)
+   * humidity = x + y * (rawHumidity / z)
    * duration is the duration in milliseconds of one measurement
    */
   SHTI2cSensor(uint8_t i2cAddress, uint16_t i2cCommand, uint8_t duration,
                float a, float b, float c,
-               float x, float y, float z, uint8_t CMD_Size)
+               float x, float y, float z, uint8_t cmd_Size)
       : mI2cAddress(i2cAddress), mI2cCommand(i2cCommand), mDuration(duration),
-        mA(a), mB(b), mC(c), mX(x), mY(y), mZ(z),mCMD_Size(CMD_Size)
+        mA(a), mB(b), mC(c), mX(x), mY(y), mZ(z), mCmd_Size(cmd_Size)
   {
   }
 
@@ -239,7 +239,7 @@ public:
   float mX;
   float mY;
   float mZ;
-  uint8_t mCMD_Size;
+  uint8_t mCmd_Size;
 
 private:
   static uint8_t crc8(const uint8_t *data, uint8_t len);

@@ -109,13 +109,13 @@ uint8_t SHTI2cSensor::crc8(const uint8_t *data, uint8_t len)
 bool SHTI2cSensor::readSample()
 {
   uint8_t data[EXPECTED_DATA_SIZE];
-  uint8_t cmd[mCMD_Size];
+  uint8_t cmd[mCmd_Size];
 
   cmd[0] = mI2cCommand >> 8;
   //is omitted for SHT4x Sensors
   cmd[1] = mI2cCommand & 0xff;
 
-  if (!readFromI2c(mI2cAddress, cmd, mCMD_Size, data,
+  if (!readFromI2c(mI2cAddress, cmd, mCmd_Size, data,
                    EXPECTED_DATA_SIZE, mDuration)) {
     return false;
   }
@@ -133,7 +133,7 @@ bool SHTI2cSensor::readSample()
   mTemperature = mA + mB * (val / mC);
 
   val = (data[3] << 8) + data[4];
-  mHumidity = mZ + mX * (val / mY);
+  mHumidity = mX + mY * (val / mZ);
 
   return true; 
   
@@ -148,7 +148,7 @@ class SHTC1Sensor : public SHTI2cSensor
 public:
     SHTC1Sensor()
         // clock stretching disabled, high precision, T first
-        : SHTI2cSensor(0x70, 0x7866, 15, -45, 175, 65535, 100, 65535,0,2)
+        : SHTI2cSensor(0x70, 0x7866, 15, -45, 175, 65535, 0, 100, 65535, 2)
     {
     }
 };
@@ -176,7 +176,7 @@ public:
   SHT3xSensor(uint8_t i2cAddress = SHT3X_I2C_ADDRESS_44)
       : SHTI2cSensor(i2cAddress, SHT3X_ACCURACY_HIGH,
                      SHT3X_ACCURACY_HIGH_DURATION,
-                     -45, 175, 65535, 100, 65535,0,2)
+                     -45, 175, 65535, 0, 100, 65535, 2)
   {
   }
 
@@ -225,7 +225,7 @@ public:
   SHT4xSensor(uint8_t i2cAddress = SHT4X_I2C_ADDRESS_44)
       : SHTI2cSensor(i2cAddress, SHT4X_ACCURACY_HIGH,
                      SHT4X_ACCURACY_HIGH_DURATION,
-                     -45, 175, 65535, 125, 65535,-6,1)
+                     -45, 175, 65535, -6, 125, 65535, 1)
   {
   }
 

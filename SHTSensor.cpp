@@ -271,7 +271,10 @@ bool SHTSensor::init()
       break;
     }
   }
-  return (mSensor != NULL);
+
+  // to finish the initialization, attempt to read to make sure the communication works
+  // Note: readSample() will check for a NULL mSensor in case auto detect failed
+  return readSample();
 }
 
 bool SHTSensor::readSample()

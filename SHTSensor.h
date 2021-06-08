@@ -101,9 +101,18 @@ public:
   }
 
   /**
-   * Initialize the sensor driver
+   * Initialize the sensor driver, and probe for the sensor on the bus
+   *
+   * If SHTSensor() was created with an empty constructor or with 'sensorType'
+   * AUTO_DETECT, init() will also try to automatically detect a sensor.
+   * Auto detection will stop as soon as the first sensor was found; if you have
+   * multiple sensor types on the bus, use the 'sensorType' argument of the
+   * constructor to control which sensor type will be instantiated.
+   *
    * To read out the sensor use readSample(), followed by getTemperature() and
    * getHumidity() to retrieve the values from the sample
+   *
+   * Returns true if communication with a sensor on the bus was successful, false otherwise
    */
   bool init();
 

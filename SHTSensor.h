@@ -157,7 +157,7 @@ public:
    * Set the sensor accuracy.
    * Returns false if the sensor does not support changing the accuracy
    */
-  virtual bool setAccuracy(SHTSensor::SHTAccuracy newAccuracy) {
+  virtual bool setAccuracy(__attribute__((unused)) SHTSensor::SHTAccuracy newAccuracy) {
     return false;
   }
 

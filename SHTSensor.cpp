@@ -67,7 +67,7 @@ bool SHTI2cSensor::readFromI2c(uint8_t i2cAddress,
     }
   }
 
-  if (Wire.endTransmission(false) != 0) {
+  if (Wire.endTransmission() != 0) {
     return false;
   }
 

@@ -260,7 +260,7 @@ bool SHTSensor::init()
            i < sizeof(AUTO_DETECT_SENSORS) / sizeof(AUTO_DETECT_SENSORS[0]);
            ++i) {
         mSensorType = AUTO_DETECT_SENSORS[i];
-        if (init() && readSample()) {
+        if (init()) {
           detected = true;
           break;
         }

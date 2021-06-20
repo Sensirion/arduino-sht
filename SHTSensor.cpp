@@ -287,6 +287,7 @@ bool SHTSensor::init()
   if (mSensor != NULL) {
     cleanup();
   }
+ 
 
   switch(mSensorType) {
     case SHT3X:
@@ -312,6 +313,7 @@ bool SHTSensor::init()
            i < sizeof(AUTO_DETECT_SENSORS) / sizeof(AUTO_DETECT_SENSORS[0]);
            ++i) {
         mSensorType = AUTO_DETECT_SENSORS[i];
+        delay(40);
         if (init()) {
           detected = true;
           break;
@@ -332,7 +334,7 @@ bool SHTSensor::init()
 bool SHTSensor::readSample()
 {
   if (!mSensor || !mSensor->readSample())
-    return false;
+    return false;  
   mTemperature = mSensor->mTemperature;
   mHumidity = mSensor->mHumidity;
   return true;

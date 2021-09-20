@@ -30,6 +30,7 @@
 #define SHTSENSOR_H
 
 #include <inttypes.h>
+#include <Wire.h>
 
 // Forward declaration
 class SHTSensorDriver;
@@ -116,7 +117,7 @@ public:
    *
    * Returns true if communication with a sensor on the bus was successful, false otherwise
    */
-  bool init();
+  bool init(TwoWire & wire = Wire);
 
   /**
    * Read new values from the sensor
@@ -153,7 +154,7 @@ public:
 private:
   void cleanup();
 
-  
+
   SHTSensorDriver *mSensor;
   float mTemperature;
   float mHumidity;
@@ -201,7 +202,7 @@ public:
 class SHTI2cSensor : public SHTSensorDriver {
 public:
   /** Size of i2c commands to send */
-  
+
 
   /** Size of i2c replies to expect */
   static const uint8_t EXPECTED_DATA_SIZE;
@@ -219,9 +220,11 @@ public:
    */
   SHTI2cSensor(uint8_t i2cAddress, uint16_t i2cCommand, uint8_t duration,
                float a, float b, float c,
-               float x, float y, float z, uint8_t cmd_Size)
+               float x, float y, float z, uint8_t cmd_Size,
+               TwoWire & wire = Wire)
       : mI2cAddress(i2cAddress), mI2cCommand(i2cCommand), mDuration(duration),
-        mA(a), mB(b), mC(c), mX(x), mY(y), mZ(z), mCmd_Size(cmd_Size)
+        mA(a), mB(b), mC(c), mX(x), mY(y), mZ(z), mCmd_Size(cmd_Size),
+        mWire(wire)
   {
   }
 
@@ -241,10 +244,12 @@ public:
   float mY;
   float mZ;
   uint8_t mCmd_Size;
+  TwoWire & mWire;
 
 private:
   static uint8_t crc8(const uint8_t *data, uint8_t len);
-  static bool readFromI2c(uint8_t i2cAddress,
+  static bool readFromI2c(TwoWire & wire,
+                          uint8_t i2cAddress,
                           const uint8_t *i2cCommand,
                           uint8_t commandLength, uint8_t *data,
                           uint8_t dataLength, uint8_t duration);

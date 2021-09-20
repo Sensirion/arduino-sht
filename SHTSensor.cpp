@@ -27,7 +27,6 @@
  */
 
 #include <inttypes.h>
-#include <Wire.h>
 #include <Arduino.h>
 
 #include "SHTSensor.h"
@@ -53,34 +52,35 @@ bool SHTSensorDriver::readSample()
 
 const uint8_t SHTI2cSensor::EXPECTED_DATA_SIZE   = 6;
 
-bool SHTI2cSensor::readFromI2c(uint8_t i2cAddress,
+bool SHTI2cSensor::readFromI2c(TwoWire & wire,
+                               uint8_t i2cAddress,
                                const uint8_t *i2cCommand,
                                uint8_t commandLength, uint8_t *data,
                                uint8_t dataLength,
                                uint8_t duration)
 {
-  Wire.beginTransmission(i2cAddress);
+  wire.beginTransmission(i2cAddress);
   for (int i = 0; i < commandLength; ++i) {
-    if (Wire.write(i2cCommand[i]) != 1) {
+    if (wire.write(i2cCommand[i]) != 1) {
       return false;
     }
   }
 
-  if (Wire.endTransmission() != 0) {
+  if (wire.endTransmission() != 0) {
     return false;
   }
 
   delay(duration);
 
-  Wire.requestFrom(i2cAddress, dataLength);
+  wire.requestFrom(i2cAddress, dataLength);
 
   // check if the same number of bytes are received that are requested.
-  if (Wire.available() != dataLength) {
+  if (wire.available() != dataLength) {
     return false;
   }
 
   for (int i = 0; i < dataLength; ++i) {
-    data[i] = Wire.read();
+    data[i] = wire.read();
   }
   return true;
 }
@@ -115,7 +115,7 @@ bool SHTI2cSensor::readSample()
   //is omitted for SHT4x Sensors
   cmd[1] = mI2cCommand & 0xff;
 
-  if (!readFromI2c(mI2cAddress, cmd, mCmd_Size, data,
+  if (!readFromI2c(mWire, mI2cAddress, cmd, mCmd_Size, data,
                    EXPECTED_DATA_SIZE, mDuration)) {
     return false;
   }
@@ -135,8 +135,8 @@ bool SHTI2cSensor::readSample()
   val = (data[3] << 8) + data[4];
   mHumidity = mX + mY * (val / mZ);
 
-  return true; 
-  
+  return true;
+
 }
 
 //
@@ -146,9 +146,9 @@ bool SHTI2cSensor::readSample()
 class SHTC1Sensor : public SHTI2cSensor
 {
 public:
-    SHTC1Sensor()
+    SHTC1Sensor(TwoWire & wire)
         // clock stretching disabled, high precision, T first
-        : SHTI2cSensor(0x70, 0x7866, 15, -45, 175, 65535, 0, 100, 65535, 2)
+        : SHTI2cSensor(0x70, 0x7866, 15, -45, 175, 65535, 0, 100, 65535, 2, wire)
     {
     }
 };
@@ -173,10 +173,10 @@ public:
   static const uint8_t SHT3X_I2C_ADDRESS_44 = 0x44;
   static const uint8_t SHT3X_I2C_ADDRESS_45 = 0x45;
 
-  SHT3xSensor(uint8_t i2cAddress = SHT3X_I2C_ADDRESS_44)
+  SHT3xSensor(TwoWire & wire, uint8_t i2cAddress = SHT3X_I2C_ADDRESS_44)
       : SHTI2cSensor(i2cAddress, SHT3X_ACCURACY_HIGH,
                      SHT3X_ACCURACY_HIGH_DURATION,
-                     -45, 175, 65535, 0, 100, 65535, 2)
+                     -45, 175, 65535, 0, 100, 65535, 2, wire)
   {
   }
 
@@ -222,10 +222,10 @@ public:
   static const uint8_t SHT4X_I2C_ADDRESS_44 = 0x44;
   static const uint8_t SHT4X_I2C_ADDRESS_45 = 0x45;
 
-  SHT4xSensor(uint8_t i2cAddress = SHT4X_I2C_ADDRESS_44)
+  SHT4xSensor(TwoWire & wire, uint8_t i2cAddress = SHT4X_I2C_ADDRESS_44)
       : SHTI2cSensor(i2cAddress, SHT4X_ACCURACY_HIGH,
                      SHT4X_ACCURACY_HIGH_DURATION,
-                     -45, 175, 65535, -6, 125, 65535, 1)
+                     -45, 175, 65535, -6, 125, 65535, 1, wire)
   {
   }
 
@@ -282,7 +282,7 @@ const SHTSensor::SHTSensorType SHTSensor::AUTO_DETECT_SENSORS[] = {
 const float SHTSensor::TEMPERATURE_INVALID = NAN;
 const float SHTSensor::HUMIDITY_INVALID = NAN;
 
-bool SHTSensor::init()
+bool SHTSensor::init(TwoWire & wire)
 {
   if (mSensor != NULL) {
     cleanup();
@@ -290,21 +290,21 @@ bool SHTSensor::init()
 
   switch(mSensorType) {
     case SHT3X:
-      mSensor = new SHT3xSensor();
+      mSensor = new SHT3xSensor(wire);
       break;
 
     case SHT3X_ALT:
-      mSensor = new SHT3xSensor(SHT3xSensor::SHT3X_I2C_ADDRESS_45);
+      mSensor = new SHT3xSensor(wire, SHT3xSensor::SHT3X_I2C_ADDRESS_45);
       break;
 
     case SHTW1:
     case SHTW2:
     case SHTC1:
     case SHTC3:
-      mSensor = new SHTC1Sensor();
+      mSensor = new SHTC1Sensor(wire);
       break;
     case SHT4X:
-      mSensor = new SHT4xSensor();
+      mSensor = new SHT4xSensor(wire);
       break;
     case AUTO_DETECT:
     {

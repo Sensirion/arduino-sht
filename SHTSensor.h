@@ -53,6 +53,7 @@ public:
     // i2c Sensors:
     /** SHT3x-DIS with ADDR (sensor pin 2) connected to VSS (default) */
     SHT3X,
+    SHT85,
     /** SHT3x-DIS with ADDR (sensor pin 2) connected to VDD */
     SHT3X_ALT,
     SHTC1,

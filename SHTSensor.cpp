@@ -290,6 +290,7 @@ bool SHTSensor::init(TwoWire & wire)
 
   switch(mSensorType) {
     case SHT3X:
+    case SHT85:
       mSensor = new SHT3xSensor(wire);
       break;
 

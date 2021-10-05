@@ -59,7 +59,8 @@ public:
     SHTC3,
     SHTW1,
     SHTW2,
-    SHT4X
+    SHT4X,
+    SHT85 = SHT3X
   };
 
   /**
@@ -224,7 +225,7 @@ public:
                TwoWire & wire = Wire)
       : mI2cAddress(i2cAddress), mI2cCommand(i2cCommand), mDuration(duration),
         mA(a), mB(b), mC(c), mX(x), mY(y), mZ(z), mCmd_Size(cmd_Size),
-        mWire(wire)
+        _wire(wire)
   {
   }
 
@@ -244,7 +245,7 @@ public:
   float mY;
   float mZ;
   uint8_t mCmd_Size;
-  TwoWire & mWire;
+  TwoWire & _wire;
 
 private:
   static uint8_t crc8(const uint8_t *data, uint8_t len);

@@ -315,7 +315,7 @@ bool SHTSensor::init(TwoWire & wire)
            ++i) {
         mSensorType = AUTO_DETECT_SENSORS[i];
         delay(40); // TODO: this was necessary to make SHT4x autodetect work; revisit to find root cause
-        if (init()) {
+        if (init(wire)) {
           detected = true;
           break;
         }

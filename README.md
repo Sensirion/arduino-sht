@@ -33,7 +33,8 @@ necessary:
    Import Library > arduino-sht
 1. Create an instance of the `SHTSensor` class (`SHTSensor sht;`)
 2. In `setup()`, make sure to init the Wire library with `Wire.begin()`
-3. If you want to use the serial console, remember to initialize the Serial
+3. Also in `setup()`, call `sht.init()` 
+5. If you want to use the serial console, remember to initialize the Serial
    library with `Serial.begin(9600)`
 1. Call `sht.readSample()` in the `loop()` function, which reads a temperature
    and humidity sample from the sensor

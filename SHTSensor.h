@@ -32,6 +32,18 @@
 #include <inttypes.h>
 #include <Wire.h>
 
+//#define DEBUG_SHT_SENSOR
+
+#ifdef DEBUG_SHT_SENSOR
+#ifdef DEBUG_ESP_PORT
+#define DEBUG_SHT(f,...) do { DEBUG_ESP_PORT.printf(PSTR(f), ##__VA_ARGS__); } while (0)
+#else
+#define DEBUG_SHT(f,...) do { Serial.printf(PSTR(f), ##__VA_ARGS__); } while (0)
+#endif
+#else
+#define DEBUG_SHT(x...) do { (void)0; } while (0)
+#endif
+
 // Forward declaration
 class SHTSensorDriver;
 
@@ -60,7 +72,8 @@ public:
     SHTC3,
     SHTW1,
     SHTW2,
-    SHT4X
+    SHT4X,
+    SHT2X
   };
 
   /**
@@ -248,7 +261,9 @@ public:
   TwoWire & mWire;
 
 private:
-  static uint8_t crc8(const uint8_t *data, uint8_t len);
+
+protected:
+  static uint8_t crc8(const uint8_t *data, uint8_t len, uint8_t crcInit = 0xff);
   static bool readFromI2c(TwoWire & wire,
                           uint8_t i2cAddress,
                           const uint8_t *i2cCommand,

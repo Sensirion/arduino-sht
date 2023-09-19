@@ -140,7 +140,7 @@ bool SHTI2cSensor::readSample()
 }
 
 //
-// class SHTC1Sensor
+// class SHTC1Sensor (SHTC1, SHTC3, SHTW1, SHTW2)
 //
 
 class SHTC1Sensor : public SHTI2cSensor
@@ -148,7 +148,7 @@ class SHTC1Sensor : public SHTI2cSensor
 public:
     SHTC1Sensor(TwoWire & wire)
         // clock stretching disabled, high precision, T first
-        : SHTI2cSensor(0x70, 0x7866, 15, -45, 175, 65535, 0, 100, 65535, 2, wire)
+        : SHTI2cSensor(0x70, 0x7866, 15, -45, 175, 65536, 0, 100, 65536, 2, wire)
     {
     }
 };

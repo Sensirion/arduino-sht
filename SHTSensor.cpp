@@ -181,6 +181,10 @@ public:
     uint8_t data[EXPECTED_DATA_SIZE];
     uint8_t cmd[mCmd_Size];
 
+    // SHT2x sends T and RH in two separate commands (different to other sensors)
+    // so we have to spit the command into two bytes and
+    // have to read from I2C two times with EXPECTED_DATA_SIZE / 2
+
     // Upper byte is T for SHT2x Sensors
     cmd[0] = mI2cCommand >> 8;
     // Lower byte is RH for SHT2x Sensors
@@ -207,12 +211,19 @@ public:
       return false;
     }
 
+    // check status bits [1..0] (see datasheet)
+    // bit 0: not used, bit 1: measurement type (0: temperature, 1 humidity)
+    if ((data[1] & 0x02 != 0x00) || (data[4] & 0x02 != 0x20)) {
+      DEBUG_SHT("SHT2x status bits false\n");
+      return false;
+    }
+
     // convert to Temperature/Humidity
     uint16_t val;
-    val = (data[0] << 8) + data[1];
+    val = (data[0] << 8) + data[1] & ~0x03; // get value and clear status bits [1..0]
     mTemperature = mA + mB * (val / mC);
 
-    val = (data[3] << 8) + data[4];
+    val = (data[3] << 8) + data[4] & ~0x03; // get value and clear status bits [1..0]
     mHumidity = mX + mY * (val / mZ);
 
     return true;

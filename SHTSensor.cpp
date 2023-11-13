@@ -213,7 +213,7 @@ public:
 
     // check status bits [1..0] (see datasheet)
     // bit 0: not used, bit 1: measurement type (0: temperature, 1 humidity)
-    if (((data[1] & 0x02) != 0x00) || ((data[4] & 0x02) != 0x20)) {
+    if (((data[1] & 0x02) != 0x00) || ((data[4] & 0x02) != 0x02)) {
       DEBUG_SHT("SHT2x status bits false\n");
       return false;
     }

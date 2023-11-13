@@ -164,7 +164,7 @@ public:
       // clock stretching disabled
       : SHTI2cSensor(0x40,     // i2cAddress
                      0xF3F5,   // i2cCommand Hi: T, Lo: RH
-                     66,       // duration
+                     85,       // duration
                      -46.85,   // a (sht_t_poly1)
                      175.72,   // b (sht_t_poly2)
                      65536.0,  // c (sht_t_poly3)

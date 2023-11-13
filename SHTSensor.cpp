@@ -213,17 +213,17 @@ public:
 
     // check status bits [1..0] (see datasheet)
     // bit 0: not used, bit 1: measurement type (0: temperature, 1 humidity)
-    if ((data[1] & 0x02 != 0x00) || (data[4] & 0x02 != 0x20)) {
+    if (((data[1] & 0x02) != 0x00) || ((data[4] & 0x02) != 0x20)) {
       DEBUG_SHT("SHT2x status bits false\n");
       return false;
     }
 
     // convert to Temperature/Humidity
     uint16_t val;
-    val = (data[0] << 8) + data[1] & ~0x03; // get value and clear status bits [1..0]
+    val = (data[0] << 8) + (data[1] & ~0x03); // get value and clear status bits [1..0]
     mTemperature = mA + mB * (val / mC);
 
-    val = (data[3] << 8) + data[4] & ~0x03; // get value and clear status bits [1..0]
+    val = (data[3] << 8) + (data[4] & ~0x03); // get value and clear status bits [1..0]
     mHumidity = mX + mY * (val / mZ);
 
     return true;

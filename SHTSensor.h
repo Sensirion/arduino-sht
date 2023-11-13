@@ -36,9 +36,9 @@
 
 #ifdef DEBUG_SHT_SENSOR
 #ifdef DEBUG_ESP_PORT
-#define DEBUG_SHT(f,...) do { DEBUG_ESP_PORT.printf(PSTR(f), ##__VA_ARGS__); } while (0)
+#define DEBUG_SHT(f) do { DEBUG_ESP_PORT.print(PSTR(f)); } while (0)
 #else
-#define DEBUG_SHT(f,...) do { Serial.printf(PSTR(f), ##__VA_ARGS__); } while (0)
+#define DEBUG_SHT(f) do { Serial.print(PSTR(f)); } while (0)
 #endif
 #else
 #define DEBUG_SHT(x...) do { (void)0; } while (0)

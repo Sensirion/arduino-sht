@@ -350,11 +350,15 @@ float SHT3xAnalogSensor::readTemperature()
 //
 
 const SHTSensor::SHTSensorType SHTSensor::AUTO_DETECT_SENSORS[] = {
+  SHT4X, // IMPORTANT: SHT4x needs to be probed before the SHT3x, since they
+         // share their I2C address, and probing for an SHT3x can cause the
+         // first reading of and SHT4x to be off.
+         // see https://github.com/Sensirion/arduino-sht/issues/27
+
   SHT2X,
   SHT3X,
   SHT3X_ALT,
-  SHTC1,
-  SHT4X
+  SHTC1
 };
 const float SHTSensor::TEMPERATURE_INVALID = NAN;
 const float SHTSensor::HUMIDITY_INVALID = NAN;

@@ -179,7 +179,7 @@ public:
   bool readSample() override
   {
     uint8_t data[EXPECTED_DATA_SIZE];
-    uint8_t cmd[mCmd_Size];
+    uint8_t cmd[mCmd_Size * 2];
 
     // SHT2x sends T and RH in two separate commands (different to other sensors)
     // so we have to spit the command into two bytes and

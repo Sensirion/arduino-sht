@@ -1,6 +1,6 @@
 /*
+ *  Copyright (c) 2015-2016, 2026 Johannes Winkelmann <jw@smts.ch>
  *  Copyright (c) 2018, Sensirion AG <andreas.brauchli@sensirion.com>
- *  Copyright (c) 2015-2016, Johannes Winkelmann <jw@smts.ch>
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -163,13 +163,21 @@ public:
    */
   bool setAccuracy(SHTAccuracy newAccuracy);
 
-  SHTSensorType mSensorType;
+  /**
+   * Get the sensor type of this instance; useful in combination
+   * with auto detect
+   * Returns current sensor type
+   */
+  SHTSensorType getSensorType() const {
+    return mSensorType;
+  }
+
 
 private:
   void cleanup();
 
-
   SHTSensorDriver *mSensor;
+  SHTSensorType mSensorType;
   float mTemperature;
   float mHumidity;
 };

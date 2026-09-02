@@ -256,7 +256,7 @@ public:
   {
   }
 
-  virtual bool setAccuracy(SHTSensor::SHTAccuracy newAccuracy)
+  bool setAccuracy(SHTSensor::SHTAccuracy newAccuracy) override
   {
     switch (newAccuracy) {
       case SHTSensor::SHT_ACCURACY_HIGH:
@@ -305,7 +305,7 @@ public:
   {
   }
 
-  virtual bool setAccuracy(SHTSensor::SHTAccuracy newAccuracy)
+  bool setAccuracy(SHTSensor::SHTAccuracy newAccuracy) override
   {
     switch (newAccuracy) {
       case SHTSensor::SHT_ACCURACY_HIGH:

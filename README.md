@@ -1,6 +1,9 @@
 # arduino-sht
 Repository for Sensirion humidity and temperature sensor support on Arduino
 
+> [!WARNING]
+> arduino-sht is scheduled to be archived in the near future. We recommend users to transition to the dedicated Arduino libraries https://github.com/Sensirion/arduino-i2c-sht3x and https://github.com/Sensirion/arduino-i2c-sht4x
+
 ## Supported sensors:
 - SHTC1
 - SHTC3

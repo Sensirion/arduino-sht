@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <Wire.h>
 
 #include "SHTSensor.h"
@@ -45,6 +46,9 @@ void loop() {
 
 String getSensorName(SHTSensor::SHTSensorType sensorType) {
   switch (sensorType) {
+    default:
+      return "INVALID sensor type (" + String(sensorType) + "); please report on https://github.com/Sensirion/arduino-sht";
+
     case SHTSensor::SHTSensorType::SHT2X:
       return "SHT2x";
 
@@ -64,6 +68,4 @@ String getSensorName(SHTSensor::SHTSensorType sensorType) {
     case SHTSensor::SHTSensorType::SHT4X:
       return "SHT4x";
   }
-
-  return "Unknown sensor type (" + String(sensorType) + "); please report on https://github.com/Sensirion/arduino-sht";
 }

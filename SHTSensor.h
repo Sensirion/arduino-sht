@@ -176,8 +176,8 @@ public:
 private:
   void cleanup();
 
-  SHTSensorDriver *mSensor;
   SHTSensorType mSensorType;
+  SHTSensorDriver *mSensor;
   float mTemperature;
   float mHumidity;
 };

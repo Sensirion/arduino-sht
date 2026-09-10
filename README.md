@@ -17,6 +17,14 @@ Repository for Sensirion humidity and temperature sensor support on Arduino
 
 For <code><a href="https://github.com/Sensirion/arduino-i2c-sht3x">sht3x</a></code> and <code><a href="https://github.com/Sensirion/arduino-i2c-sht4x">sht4x</a></code> there are specific drivers available in separate repositories.
 
+
+## ChangeLog
+
+### Version 2.0.0, 2026-01-28
+
+- Made `mSensorType` private, replaced with `getSensorType()` accessor
+- Added example usage of `getSensorType()` to `sht-autodetect` example
+
 ## Installation
 
 The recommended way to install ```arduino-sht``` is through the Library

@@ -373,8 +373,6 @@ const SHTSensor::SHTSensorType SHTSensor::AUTO_DETECT_SENSORS[] = {
   SHT3X_ALT,
   SHTC1
 };
-const float SHTSensor::TEMPERATURE_INVALID = NAN;
-const float SHTSensor::HUMIDITY_INVALID = NAN;
 
 bool SHTSensor::init(TwoWire & wire)
 {

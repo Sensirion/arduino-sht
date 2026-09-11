@@ -89,10 +89,6 @@ public:
     SHT_ACCURACY_LOW
   };
 
-  /** Value reported by getHumidity() when the sensor is not initialized */
-  static const float HUMIDITY_INVALID;
-  /** Value reported by getTemperature() when the sensor is not initialized */
-  static const float TEMPERATURE_INVALID;
   /**
    * Auto-detectable sensor types.
    * Note that the SHTC3, SHTW1 and SHTW2 share exactly the same driver as the SHTC1

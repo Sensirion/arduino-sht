@@ -107,9 +107,7 @@ public:
    */
   SHTSensor(SHTSensorType sensorType = AUTO_DETECT)
       : mSensorType(sensorType),
-        mSensor(NULL),
-        mTemperature(SHTSensor::TEMPERATURE_INVALID),
-        mHumidity(SHTSensor::HUMIDITY_INVALID)
+        mSensor(NULL)
   {
   }
 
@@ -145,17 +143,13 @@ public:
    * Get the relative humidity in percent read from the last sample
    * Use readSample() to trigger a new sensor reading
    */
-  float getHumidity() const {
-    return mHumidity;
-  }
+  float getHumidity() const;
 
   /**
    * Get the temperature in Celsius read from the last sample
    * Use readSample() to trigger a new sensor reading
    */
-  float getTemperature() const {
-    return mTemperature;
-  }
+  float getTemperature() const;
 
   /**
    * Change the sensor accurancy, if supported by the sensor
@@ -178,8 +172,6 @@ private:
 
   SHTSensorType mSensorType;
   SHTSensorDriver *mSensor;
-  float mTemperature;
-  float mHumidity;
 };
 
 

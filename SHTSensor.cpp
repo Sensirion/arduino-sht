@@ -31,6 +31,19 @@
 
 #include "SHTSensor.h"
 
+//
+// class SHTSensor
+//
+
+float SHTSensor::getHumidity() const
+{
+  return mSensor ? mSensor->getHumidity() : NAN;
+}
+
+float SHTSensor::getTemperature() const
+{
+  return mSensor ? mSensor->getTemperature() : NAN;
+}
 
 //
 // class SHTSensorDriver
@@ -419,11 +432,9 @@ bool SHTSensor::init(TwoWire & wire)
 
 bool SHTSensor::readSample()
 {
-  if (!mSensor || !mSensor->readSample())
+  if (!mSensor)
     return false;
-  mTemperature = mSensor->mTemperature;
-  mHumidity = mSensor->mHumidity;
-  return true;
+  return mSensor->readSample();
 }
 
 bool SHTSensor::setAccuracy(SHTAccuracy newAccuracy)

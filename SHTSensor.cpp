@@ -31,6 +31,19 @@
 
 #include "SHTSensor.h"
 
+//
+// class SHTSensor
+//
+
+float SHTSensor::getHumidity() const
+{
+  return mSensor ? mSensor->getHumidity() : NAN;
+}
+
+float SHTSensor::getTemperature() const
+{
+  return mSensor ? mSensor->getTemperature() : NAN;
+}
 
 //
 // class SHTSensorDriver
@@ -42,9 +55,12 @@ SHTSensorDriver::~SHTSensorDriver()
 
 bool SHTSensorDriver::readSample()
 {
-  return false;
-}
+  // set to NAN in case the readout fails
+  mTemperature = NAN;
+  mHumidity = NAN;
 
+  return readSampleInternal();
+}
 
 //
 // class SHTI2cSensor
@@ -106,7 +122,7 @@ uint8_t SHTI2cSensor::crc8(const uint8_t *data, uint8_t len, uint8_t crcInit)
 }
 
 
-bool SHTI2cSensor::readSample()
+bool SHTI2cSensor::readSampleInternal()
 {
   uint8_t data[EXPECTED_DATA_SIZE];
   uint8_t cmd[mCmd_Size];
@@ -176,7 +192,7 @@ public:
   {
   }
 
-  bool readSample() override
+  bool readSampleInternal() override
   {
     uint8_t data[EXPECTED_DATA_SIZE];
     uint8_t cmd[mCmd_Size];
@@ -360,8 +376,6 @@ const SHTSensor::SHTSensorType SHTSensor::AUTO_DETECT_SENSORS[] = {
   SHT3X_ALT,
   SHTC1
 };
-const float SHTSensor::TEMPERATURE_INVALID = NAN;
-const float SHTSensor::HUMIDITY_INVALID = NAN;
 
 bool SHTSensor::init(TwoWire & wire)
 {
@@ -419,11 +433,9 @@ bool SHTSensor::init(TwoWire & wire)
 
 bool SHTSensor::readSample()
 {
-  if (!mSensor || !mSensor->readSample())
+  if (!mSensor)
     return false;
-  mTemperature = mSensor->mTemperature;
-  mHumidity = mSensor->mHumidity;
-  return true;
+  return mSensor->readSample();
 }
 
 bool SHTSensor::setAccuracy(SHTAccuracy newAccuracy)

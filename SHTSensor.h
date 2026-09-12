@@ -89,10 +89,6 @@ public:
     SHT_ACCURACY_LOW
   };
 
-  /** Value reported by getHumidity() when the sensor is not initialized */
-  static const float HUMIDITY_INVALID;
-  /** Value reported by getTemperature() when the sensor is not initialized */
-  static const float TEMPERATURE_INVALID;
   /**
    * Auto-detectable sensor types.
    * Note that the SHTC3, SHTW1 and SHTW2 share exactly the same driver as the SHTC1
@@ -107,9 +103,7 @@ public:
    */
   SHTSensor(SHTSensorType sensorType = AUTO_DETECT)
       : mSensorType(sensorType),
-        mSensor(NULL),
-        mTemperature(SHTSensor::TEMPERATURE_INVALID),
-        mHumidity(SHTSensor::HUMIDITY_INVALID)
+        mSensor(NULL)
   {
   }
 
@@ -145,17 +139,13 @@ public:
    * Get the relative humidity in percent read from the last sample
    * Use readSample() to trigger a new sensor reading
    */
-  float getHumidity() const {
-    return mHumidity;
-  }
+  float getHumidity() const;
 
   /**
    * Get the temperature in Celsius read from the last sample
    * Use readSample() to trigger a new sensor reading
    */
-  float getTemperature() const {
-    return mTemperature;
-  }
+  float getTemperature() const;
 
   /**
    * Change the sensor accurancy, if supported by the sensor
@@ -178,8 +168,6 @@ private:
 
   SHTSensorType mSensorType;
   SHTSensorDriver *mSensor;
-  float mTemperature;
-  float mHumidity;
 };
 
 
@@ -198,7 +186,7 @@ public:
   }
 
   /** Returns true if the next sample was read and the values are cached */
-  virtual bool readSample();
+  bool readSample();
 
   /**
    * Get the relative humidity in percent read from the last sample
@@ -215,6 +203,9 @@ public:
   float getTemperature() const {
     return mTemperature;
   }
+
+protected:
+  virtual bool readSampleInternal() = 0;
 
   float mTemperature;
   float mHumidity;
@@ -252,8 +243,6 @@ public:
 
   ~SHTI2cSensor() = default;
 
-  bool readSample() override;
-
   uint8_t mI2cAddress;
   uint16_t mI2cCommand;
   uint8_t mDuration;
@@ -269,6 +258,8 @@ public:
 private:
 
 protected:
+   bool readSampleInternal() override;
+
   static uint8_t crc8(const uint8_t *data, uint8_t len, uint8_t crcInit = 0xff);
   static bool readFromI2c(TwoWire & wire,
                           uint8_t i2cAddress,

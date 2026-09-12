@@ -186,7 +186,7 @@ public:
   }
 
   /** Returns true if the next sample was read and the values are cached */
-  virtual bool readSample();
+  bool readSample();
 
   /**
    * Get the relative humidity in percent read from the last sample
@@ -203,6 +203,9 @@ public:
   float getTemperature() const {
     return mTemperature;
   }
+
+protected:
+  virtual bool readSampleInternal() = 0;
 
   float mTemperature;
   float mHumidity;
@@ -240,8 +243,6 @@ public:
 
   ~SHTI2cSensor() = default;
 
-  bool readSample() override;
-
   uint8_t mI2cAddress;
   uint16_t mI2cCommand;
   uint8_t mDuration;
@@ -257,6 +258,8 @@ public:
 private:
 
 protected:
+   bool readSampleInternal() override;
+
   static uint8_t crc8(const uint8_t *data, uint8_t len, uint8_t crcInit = 0xff);
   static bool readFromI2c(TwoWire & wire,
                           uint8_t i2cAddress,

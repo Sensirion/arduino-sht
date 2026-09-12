@@ -55,9 +55,12 @@ SHTSensorDriver::~SHTSensorDriver()
 
 bool SHTSensorDriver::readSample()
 {
-  return false;
-}
+  // set to NAN in case the readout fails
+  mTemperature = NAN;
+  mHumidity = NAN;
 
+  return readSampleInternal();
+}
 
 //
 // class SHTI2cSensor
@@ -119,7 +122,7 @@ uint8_t SHTI2cSensor::crc8(const uint8_t *data, uint8_t len, uint8_t crcInit)
 }
 
 
-bool SHTI2cSensor::readSample()
+bool SHTI2cSensor::readSampleInternal()
 {
   uint8_t data[EXPECTED_DATA_SIZE];
   uint8_t cmd[mCmd_Size];
@@ -189,7 +192,7 @@ public:
   {
   }
 
-  bool readSample() override
+  bool readSampleInternal() override
   {
     uint8_t data[EXPECTED_DATA_SIZE];
     uint8_t cmd[mCmd_Size];

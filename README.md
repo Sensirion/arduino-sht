@@ -17,6 +17,26 @@ Repository for Sensirion humidity and temperature sensor support on Arduino
 
 For <code><a href="https://github.com/Sensirion/arduino-i2c-sht3x">sht3x</a></code> and <code><a href="https://github.com/Sensirion/arduino-i2c-sht4x">sht4x</a></code> there are specific drivers available in separate repositories.
 
+## User visible changes in 2.0.0
+
+### mSensorType changed to private, added getSensorType()
+
+`mSensorType` was never meant to be exposed to users of the library, but has been in the past
+few releases, with users mentioning it's use in their application(s). This release fixes the
+exposed member variable and adds a getter to retain the functionality.
+
+If you're using mSensorType today, simply replace with a call to `getSensorType()`
+
+### getHumidity() and getTemperature() behavior
+
+In the past, calls to getHumidity() and getTemperature() calls returned the last valid
+measurement - assuming one had taken place - even if a readSample() call failed. The new
+behavior is such that those two functions return `NAN` after when readSample() fails.
+
+Applications that used the caching behavior will need to be updated to implement local
+caching.
+
+
 ## Installation
 
 The recommended way to install ```arduino-sht``` is through the Library
